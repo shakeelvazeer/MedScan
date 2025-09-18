@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    # branches:
+    #   - main
+    paths:
+      - 'FRONTEND/**'  # Trigger only when changes are pushed to FRONTEND folder
+      - 'BACKEND/**'   # Trigger only when changes are pushed to BACKEND folder
+  # pull_request:
+  #   types: [closed]
+  #   branches:
+  #     - main
+
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20  # Adjust Node.js version as needed
+
+      - name: Install dependencies and build React app
+        run: |
+          cd FRONTEND
+          yarn install
+          yarn run build
+
+  build-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11  # Adjust the version accordingly
+
+      - name: Install dependencies for backend
+        run: |
+          cd BACKEND
+          pip install -r requirements.txt
+
+      - name: Run backend tests (if applicable)
+        run: |
+          cd BACKEND
+          python -m unittest discover -s . -p '*_test.py'
